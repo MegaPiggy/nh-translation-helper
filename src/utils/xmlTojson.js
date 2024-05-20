@@ -51,13 +51,15 @@ const xmlTojson = ({ projectRoot }) => {
             v.DialogueOptionsList && v.Dialogue
               ? [
                   v.Dialogue.flatMap((v) => v.Page),
-                  v.DialogueOptionsList.flatMap((v) =>
-                    v.DialogueOption.flatMap((v) => v.Text)
+                  v.DialogueOptionsList.flatMap((v) => v.DialogueOption
+                  ? v.DialogueOption.flatMap((v) => v.Text)
+                  : ""
                   ),
                 ]
               : v.DialogueOptionsList
-              ? v.DialogueOptionsList.flatMap((v) => 
-                v.DialogueOption.flatMap((v) => v.Text)
+              ? v.DialogueOptionsList.flatMap((v) => v.DialogueOption
+                ? v.DialogueOption.flatMap((v) => v.Text)
+                : ""
               )
               : v.Dialogue
               ? v.Dialogue.flatMap((v) => v.Page)
