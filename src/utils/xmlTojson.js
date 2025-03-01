@@ -170,8 +170,11 @@ const xmlTojson = ({ projectRoot }) => {
     .replaceAll(/.xml@.+/g, "");
 
   const exportJSON = () => {
-    fs.mkdir(path.join(projectRoot, "translations"), (err) => {
-      return;
+    fs.mkdir(path.join(projectRoot, "translations"), { recursive: true }, (err) => {
+      if (err) {
+        console.log(logSymbols.error, "Failed to create translations directory.");
+        return;
+      }
     });
     fs.writeFile(
       path.join(projectRoot, "translations/english.json"),
