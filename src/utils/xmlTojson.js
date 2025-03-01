@@ -71,27 +71,44 @@ const xmlTojson = ({ projectRoot }) => {
     return dialogueArr;
   };
 
+  const parseEntry = (entry) => {
+    const result = [];
+
+    // Extract the name
+    if (entry.Name) {
+      result.push(entry.Name);
+    }
+
+    // Extract RumorFact
+    if (entry.RumorFact) {
+      entry.RumorFact.forEach((fact) => {
+        result.push(fact.RumorName, fact.Text);
+      });
+    }
+
+    // Extract ExploreFact
+    if (entry.ExploreFact) {
+      entry.ExploreFact.forEach((fact) => {
+        result.push(fact.Text);
+      });
+    }
+
+    // Recursively parse nested entries
+    if (entry.Entry) {
+      entry.Entry.forEach((nestedEntry) => {
+        result.push(...parseEntry(nestedEntry));
+      });
+    }
+
+    return result;
+  };
+
   const parseXmlShipLogsDirToArr = (filePath) => {
     const xml = fs.readFileSync(filePath, "utf-8");
+    const json = parser.toJson(xml, parseOptions);
     const shipLogsArr = [
       ...new Set(
-        parser
-          .toJson(xml, parseOptions)
-          .AstroObjectEntry[0].Entry.flatMap((v) =>
-            v.RumorFact && v.ExploreFact
-              ? [
-                  v.Name,
-                  v.RumorFact.flatMap((v) => [v.RumorName, v.Text]).flat(),
-                  v.ExploreFact.flatMap((v) => v.Text),
-                ]
-              : v.ExploreFact
-              ? [v.Name, v.ExploreFact.flatMap((v) => v.Text)]
-              : [
-                  v.Name,
-                  v.RumorFact.flatMap((v) => [v.RumorName, v.Text]).flat(),
-                ]
-          )
-          .flat(Infinity)
+        json.AstroObjectEntry[0].Entry.flatMap((v) => parseEntry(v))
       ),
     ];
     return shipLogsArr;
