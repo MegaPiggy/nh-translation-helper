@@ -128,8 +128,8 @@ const xmlTojson = ({ projectRoot }) => {
   const convertLineBreak = (arr) =>
     arr.map((vs) =>
       Array.isArray(vs)
-        ? vs.map((v) => v.replaceAll("\n", "\r\n"))
-        : vs.replaceAll("\n", "\r\n")
+        ? vs.map((v) => String(v).replaceAll("\n", "\r\n")) // Ensure v is a string
+        : String(vs).replaceAll("\n", "\r\n") // Ensure vs is a string
     );
 
   const convertedAllDialogueArr = convertLineBreak(allDialogueArr);
