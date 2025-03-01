@@ -8,15 +8,17 @@ const logSymbols = require("log-symbols");
 const confirmFileOverwite = require("./confirmFileOverwrite");
 
 const xmlTojson = ({ projectRoot }) => {
-  if (!fs.existsSync(path.join(projectRoot, "planets"))) {
+  if (!fs.existsSync(path.join(projectRoot))) {
     console.log(logSymbols.error, "Path of the project root is invalid.");
     return;
   }
 
   const fileList = glob
     //normalize path for windows (glob only use forward-slashes)
-    .sync(normalize(path.join(projectRoot, "planets/**/*.xml")))
+    .sync(normalize(path.join(projectRoot, "**/*.xml")))
     .map((v) => normalize(v));
+
+  console.log("File List:", fileList); // Debugging line
 
   if (Array.isArray(fileList) && !fileList.length) {
     console.log(logSymbols.error, "XML file not found");
